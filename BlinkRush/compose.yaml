@@ -1,0 +1,7 @@
+﻿services:
+  blinkrush:
+    image: blinkrush
+    build:
+      context: .
+      dockerfile: Dockerfile
+
