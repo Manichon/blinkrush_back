@@ -1,0 +1,14 @@
+﻿services:
+  blinkrush:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+    volumes:
+      - blinkrush-data:/app/Data
+
+volumes:
+  blinkrush-data:
