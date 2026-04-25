@@ -35,6 +35,19 @@ docker compose -f compose.yaml up --build
 
 L’API écoute sur le port **8080**. Les données sont persistées dans le volume `blinkrush-data` monté sur `/app/Data`.
 
+### Déploiement VPS (GHCR)
+
+Option recommandée : pull l'image publiée par la CI GitHub Actions.
+
+```bash
+docker login ghcr.io -u Manichon
+docker pull ghcr.io/manichon/blinkrush-back:latest
+cd BlinkRushBack
+docker compose -f compose.prod.yaml up -d
+```
+
+Si le package GHCR est privé, utilise un token GitHub (PAT) avec permission `read:packages`.
+
 ## Migrations
 
 Les migrations sont dans `BlinkRushBack/Data/Migrations/`. Pour en ajouter une après modification du modèle :
