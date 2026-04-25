@@ -10,6 +10,7 @@ public static class LeaderboardEndpoints
     {
         api.MapPost("/records", CreateRecordAsync).WithName("CreateRecord");
         api.MapGet("/leaderboard", GetLeaderboardAsync).WithName("GetLeaderboard");
+        api.MapGet("/users/leaderboard", GetUserLeaderboardAsync).WithName("GetUserLeaderboard");
         return api;
     }
 
@@ -26,9 +27,16 @@ public static class LeaderboardEndpoints
         if (body.Mode == LeaderboardModes.Endurance && body.Value < 0)
             return Results.BadRequest(new { error = "endurance value must be non-negative" });
 
+        if (string.IsNullOrWhiteSpace(body.DeviceId))
+            return Results.BadRequest(new { error = "deviceId is required" });
+
+        var name = string.IsNullOrWhiteSpace(body.Name) ? null : body.Name.Trim();
+
         var record = new LeaderboardRecord
         {
             Id = Guid.NewGuid(),
+            DeviceId = body.DeviceId.Trim(),
+            Name = name,
             Mode = body.Mode,
             Value = body.Value,
             OccurredAt = body.OccurredAt ?? DateTimeOffset.UtcNow
@@ -60,5 +68,38 @@ public static class LeaderboardEndpoints
         var list = rows.ConvertAll(LeaderboardRecordMapper.ToResponse);
 
         return Results.Ok(list);
+    }
+
+    private static async Task<IResult> GetUserLeaderboardAsync(
+        string? mode,
+        int? take,
+        BlinkRushDbContext db)
+    {
+        if (string.IsNullOrEmpty(mode) || !LeaderboardModes.IsValid(mode))
+            return Results.BadRequest(new { error = "mode must be speedRun or endurance" });
+
+        var limit = Math.Clamp(take ?? 20, 1, 100);
+
+        IQueryable<LeaderboardRecord> query = db.LeaderboardRecords.Where(r => r.Mode == mode);
+
+        query = mode == LeaderboardModes.SpeedRun
+            ? query.OrderBy(r => r.Value)
+            : query.OrderByDescending(r => r.Value);
+
+        var rows = await query.ToListAsync();
+
+        var bestPerDevice = rows
+            .GroupBy(r => r.DeviceId)
+            .Select(g => g.First())
+            .Take(limit)
+            .Select((r, i) => new UserLeaderboardEntry(
+                i + 1,
+                r.DeviceId,
+                r.Name,
+                r.Value,
+                r.OccurredAt))
+            .ToList();
+
+        return Results.Ok(bestPerDevice);
     }
 }

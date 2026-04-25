@@ -1,9 +1,8 @@
 namespace BlinkRush.Api.Contracts;
 
-public sealed record RecordResponse(
-    Guid Id,
+public sealed record UserLeaderboardEntry(
+    int Rank,
     string DeviceId,
     string? Name,
-    string Mode,
     double Value,
     DateTimeOffset OccurredAt);
