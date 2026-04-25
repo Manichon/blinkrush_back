@@ -7,6 +7,8 @@ Content-Type: application/json
 {
   "mode": "speedRun",
   "value": 12.345,
+  "deviceId": "device-abc-123",
+  "name": "PlayerOne",
   "occurredAt": null
 }
 
@@ -16,7 +18,9 @@ Content-Type: application/json
 
 {
   "mode": "endurance",
-  "value": 42
+  "value": 42,
+  "deviceId": "device-abc-123",
+  "name": null
 }
 
 ### Leaderboard Speed Run (best times first)
@@ -25,6 +29,14 @@ Accept: application/json
 
 ### Leaderboard Endurance (most blinks first)
 GET {{BlinkRush_HostAddress}}/api/leaderboard?mode=endurance&take=20
+Accept: application/json
+
+### User leaderboard Speed Run (best time per device)
+GET {{BlinkRush_HostAddress}}/api/users/leaderboard?mode=speedRun&take=20
+Accept: application/json
+
+### User leaderboard Endurance (best blinks per device)
+GET {{BlinkRush_HostAddress}}/api/users/leaderboard?mode=endurance&take=20
 Accept: application/json
 
 ###

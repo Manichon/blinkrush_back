@@ -8,6 +8,10 @@ public sealed class LeaderboardRecord
 {
     public Guid Id { get; set; }
 
+    public string DeviceId { get; set; } = "";
+
+    public string? Name { get; set; }
+
     /// <summary>speedRun | endurance</summary>
     public string Mode { get; set; } = "";
 

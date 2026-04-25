@@ -20,8 +20,9 @@ dotnet run --launch-profile http
 
 | Méthode | Chemin | Description |
 |--------|--------|-------------|
-| `POST` | `/api/records` | Corps JSON : `mode` (`speedRun` \| `endurance`), `value` (nombre), `occurredAt` (optionnel, ISO 8601). |
-| `GET` | `/api/leaderboard?mode=speedRun` ou `mode=endurance` (`take` optionnel, défaut 20) | Classement : Speed Run par temps croissant, Endurance par nombre de clignements décroissant. |
+| `POST` | `/api/records` | Corps JSON : `mode` (`speedRun` \| `endurance`), `value` (nombre), `deviceId` (string requis, identifie l’appareil), `name` (string optionnel), `occurredAt` (optionnel, ISO 8601). |
+| `GET` | `/api/leaderboard?mode=speedRun` ou `mode=endurance` (`take` optionnel, défaut 20) | Tous les scores : Speed Run par temps croissant, Endurance par nombre de clignements décroissant. |
+| `GET` | `/api/users/leaderboard?mode=speedRun` ou `mode=endurance` (`take` optionnel, défaut 20) | Classement entre appareils : un meilleur score par `deviceId` (même tri que ci-dessus). Chaque entrée inclut un `rank`. |
 
 Exemples : voir [`BlinkRushBack/BlinkRush.http`](BlinkRushBack/BlinkRush.http).
 
