@@ -1,0 +1,14 @@
+services:
+  blinkrush:
+    image: ghcr.io/manichon/blinkrush-back:latest
+    container_name: blinkrush-back
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_URLS: http://+:8080
+    volumes:
+      - blinkrush-data:/app/Data
+
+volumes:
+  blinkrush-data:

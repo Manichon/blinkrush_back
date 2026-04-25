@@ -1,0 +1,30 @@
+@BlinkRush_HostAddress = http://localhost:5281
+
+### Create Speed Run record
+POST {{BlinkRush_HostAddress}}/api/records
+Content-Type: application/json
+
+{
+  "mode": "speedRun",
+  "value": 12.345,
+  "occurredAt": null
+}
+
+### Create Endurance record
+POST {{BlinkRush_HostAddress}}/api/records
+Content-Type: application/json
+
+{
+  "mode": "endurance",
+  "value": 42
+}
+
+### Leaderboard Speed Run (best times first)
+GET {{BlinkRush_HostAddress}}/api/leaderboard?mode=speedRun&take=20
+Accept: application/json
+
+### Leaderboard Endurance (most blinks first)
+GET {{BlinkRush_HostAddress}}/api/leaderboard?mode=endurance&take=20
+Accept: application/json
+
+###

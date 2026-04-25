@@ -36,6 +36,11 @@ ScaffoldingReadMe.txt
 # NuGet Symbol Packages
 *.snupkg
 
+# Local SQLite (dev)
+**/Data/*.db
+**/Data/*.db-shm
+**/Data/*.db-wal
+
 # Others
 ~$*
 *~
