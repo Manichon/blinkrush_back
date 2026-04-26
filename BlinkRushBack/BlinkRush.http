@@ -27,6 +27,14 @@ Content-Type: application/json
 GET {{BlinkRush_HostAddress}}/api/leaderboard?mode=speedRun&take=20
 Accept: application/json
 
+### Records by deviceId (all modes)
+GET {{BlinkRush_HostAddress}}/api/records/device-abc-123
+Accept: application/json
+
+### Records by deviceId (filtered by mode)
+GET {{BlinkRush_HostAddress}}/api/records/device-abc-123?mode=speedRun&take=50
+Accept: application/json
+
 ### Leaderboard Endurance (most blinks first)
 GET {{BlinkRush_HostAddress}}/api/leaderboard?mode=endurance&take=20
 Accept: application/json
