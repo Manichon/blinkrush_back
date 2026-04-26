@@ -70,10 +70,10 @@ public static class LeaderboardEndpoints
         if (!string.IsNullOrEmpty(mode))
             query = query.Where(r => r.Mode == mode);
 
-        var rows = await query
+        var rows = (await query.ToListAsync())
             .OrderByDescending(r => r.OccurredAt)
             .Take(limit)
-            .ToListAsync();
+            .ToList();
 
         var list = rows.ConvertAll(LeaderboardRecordMapper.ToResponse);
         return Results.Ok(list);
