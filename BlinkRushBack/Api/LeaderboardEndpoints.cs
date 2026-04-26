@@ -9,6 +9,7 @@ public static class LeaderboardEndpoints
     public static RouteGroupBuilder MapLeaderboardApi(this RouteGroupBuilder api)
     {
         api.MapPost("/records", CreateRecordAsync).WithName("CreateRecord");
+        api.MapGet("/records/{deviceId}", GetRecordsByDeviceIdAsync).WithName("GetRecordsByDeviceId");
         api.MapGet("/leaderboard", GetLeaderboardAsync).WithName("GetLeaderboard");
         api.MapGet("/users/leaderboard", GetUserLeaderboardAsync).WithName("GetUserLeaderboard");
         return api;
@@ -46,6 +47,36 @@ public static class LeaderboardEndpoints
 
         var response = LeaderboardRecordMapper.ToResponse(record);
         return Results.Created($"/api/records/{record.Id}", response);
+    }
+
+    private static async Task<IResult> GetRecordsByDeviceIdAsync(
+        string deviceId,
+        string? mode,
+        int? take,
+        BlinkRushDbContext db)
+    {
+        if (string.IsNullOrWhiteSpace(deviceId))
+            return Results.BadRequest(new { error = "deviceId is required" });
+
+        if (!string.IsNullOrEmpty(mode) && !LeaderboardModes.IsValid(mode))
+            return Results.BadRequest(new { error = "mode must be speedRun or endurance" });
+
+        var limit = Math.Clamp(take ?? 100, 1, 500);
+        var normalizedDeviceId = deviceId.Trim();
+
+        IQueryable<LeaderboardRecord> query = db.LeaderboardRecords
+            .Where(r => r.DeviceId == normalizedDeviceId);
+
+        if (!string.IsNullOrEmpty(mode))
+            query = query.Where(r => r.Mode == mode);
+
+        var rows = await query
+            .OrderByDescending(r => r.OccurredAt)
+            .Take(limit)
+            .ToListAsync();
+
+        var list = rows.ConvertAll(LeaderboardRecordMapper.ToResponse);
+        return Results.Ok(list);
     }
 
     private static async Task<IResult> GetLeaderboardAsync(
